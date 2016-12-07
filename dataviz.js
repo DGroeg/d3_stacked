@@ -60,9 +60,9 @@ var svg = d3.select("svg.dataviz1")
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.csv("data.csv", function(error, data) {
+d3.csv("data.csv", function(error, _data) {
   if (error) throw error;
-  data = data.reduce(function(accu,datum) {
+  data = _data.reduce(function(accu,datum) {
     var found = accu.find(function(d){ return d.country == datum.COUNTRY});
     if (found == null) {
       var d = {"country":datum.COUNTRY};
@@ -114,6 +114,9 @@ d3.csv("data.csv", function(error, data) {
       .attr("class", "axis axis--y")
       .attr("transform", "translate(" + width + ",0)")
       .call(yAxis);
+
+  addSvg2(PersonalCare);
+  addSvg3(["Sleep"]);
 });
 
 var svg2 = d3.select("svg.dataviz2")
@@ -123,25 +126,6 @@ var svg2 = d3.select("svg.dataviz2")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 function addSvg2(category) {
-	d3.csv("data.csv", function(error, data) {
-	  if (error) throw error;
-	  data = data.reduce(function(accu,datum) {
-		var found = accu.find(function(d){ return d.country == datum.COUNTRY});
-		if (found == null) {
-		  var d = {"country":datum.COUNTRY};
-		  category.forEach(function(key){
-			d[key] = parseInt(datum[key],10)/2 || 0;
-		  });
-		  return accu.concat([d]);
-		} else {
-		  category.forEach(function(key){
-			found[key] += parseInt(datum[key],10)/2 || 0;
-		  })
-		  return accu;
-		}
-	  },[]);
-	  //console.log(data);
-
 	  var layers = d3.layout.stack()(category.map(function(c,category_n) {
 		return data.map(function(d) {
 			console.log(category_n);
@@ -189,37 +173,16 @@ function addSvg2(category) {
 		  .attr("class", "axis axis--y")
 		  .attr("transform", "translate(" + width + ",0)")
 		  .call(yAxis);
-	});
 };
 
-addSvg2(PersonalCare);
 
 var svg3 = d3.select("svg.dataviz3")
     .attr("width", o_width)
     .attr("height", o_height)
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-	
-function addSvg3(category) {
-	d3.csv("data.csv", function(error, data) {
-	  if (error) throw error;
-	  data = data.reduce(function(accu,datum) {
-		var found = accu.find(function(d){ return d.country == datum.COUNTRY});
-		if (found == null) {
-		  var d = {"country":datum.COUNTRY};
-		  category.forEach(function(key){
-			d[key] = parseInt(datum[key],10)/2 || 0;
-		  });
-		  return accu.concat([d]);
-		} else {
-		  category.forEach(function(key){
-			found[key] += parseInt(datum[key],10)/2 || 0;
-		  })
-		  return accu;
-		}
-	  },[]);
-	  //console.log(data);
 
+function addSvg3(category) {
 	  var layers = d3.layout.stack()(category.map(function(c,category_n) {
 		return data.map(function(d) {
 		  return {x: d.country, y: d[c], category_n:category_n};
@@ -266,9 +229,7 @@ function addSvg3(category) {
 		  .attr("class", "axis axis--y")
 		  .attr("transform", "translate(" + width + ",0)")
 		  .call(yAxis);
-	});
 };
 
-addSvg3(["Sleep"]);
 
 
