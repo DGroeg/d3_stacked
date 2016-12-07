@@ -8,12 +8,13 @@ var Countries = [ "Belgium", "Bulgaria", "Germany", "Estonia", "Spain", "France"
 var Fields = [ 
 "Personal care",
 "Employment, related activities and travel as part of/during main and second job",
-"Study", "Household and family care", "Leisure, social and associative life", "Travel except travel related to jobs", 
+"Household and family care", "Leisure, social and associative life", "Travel except travel related to jobs", 
 "Unspecified time use"];
 
 var PersonalCare = ["Sleep", "Eating", "Other and/or unspecified personal care"];
-var Employment = ["Main and second job and related travel", "Activities related to employment and unspecified employment"];
-var Study = ["School and university except homework", "Homework", "Free time study"];
+var Employment = ["Main and second job and related travel", "Activities related to employment and unspecified employment",
+"School and university except homework", "Homework", "Free time study"];
+//var Study = ["School and university except homework", "Homework", "Free time study"];
 var Household = ["Food management except dish washing", "Dish washing", 
 "Cleaning dwelling", "Household upkeep except cleaning dwelling",
 "Laundry", "Ironing", "Handicraft and producing textiles and other care for textiles", 
@@ -28,10 +29,14 @@ var Leisure = [ "Organisational work", "Informal help to other households", "Par
 "Computer games", "Computing", "Hobbies and games except computing and computer games", 
 "Reading books", "Reading, except books", "TV and video", "Radio and music", 
 "Unspecified leisure"];
-var Categories = {"Leisure, social and associative life":Leisure,"Personal care":PersonalCare,"Employment, related activities and travel as part of/during main and second job":Employment,"Study":Study,"Household and family care":Household,"Travel except travel related to jobs":Travel,"Unspecified time use":null};
 var Travel = ["Travel to/from work", "Travel related to study", "Travel related to shopping and services", "Transporting a child", 
 "Travel related to other household purposes", "Travel related to leisure, social and associative life", "Unspecified travel"];
-var AllCat = Fields.concat(PersonalCare).concat(Employment).concat(Study).concat(Household).concat(Leisure).concat(Travel);
+var Categories = {"Leisure, social and associative life":Leisure,"Personal care":PersonalCare,
+"Employment, related activities and travel as part of/during main and second job":Employment,
+"Household and family care":Household,"Travel except travel related to jobs":Travel,"Unspecified time use":null};
+
+
+var AllCat = Fields.concat(PersonalCare).concat(Employment).concat(Household).concat(Leisure).concat(Travel);
 
 var o_width=950*1, o_height=400*1;
 
@@ -120,8 +125,8 @@ d3.csv("data.csv", function(error, _data) {
       .attr("transform", "translate(" + width + ",0)")
       .call(yAxis);
 
-  addSvg2(PersonalCare);
-  addSvg3(["Sleep"]);
+  //addSvg2(PersonalCare);
+  //addSvg3(["Sleep"]);
 });
 
 var svg2 = d3.select("svg.dataviz2")
@@ -132,13 +137,13 @@ var svg2 = d3.select("svg.dataviz2")
 
 function addSvg2(category) {
     if (category == null){
-      console.log("No data fo Unspecified!");
+      console.log("No data for Unspecified!");
       //return;
     }
     svg2.selectAll("*").remove();
 	  var layers = d3.layout.stack()(category.map(function(c,category_n) {
 		return data.map(function(d) {
-		  return {x: d.country, y: d[c], category_n:category_n};
+		  return {x: d.country, y: d[c], category_n:category_n, category:c};
 		});
 	  }));
 	  x.domain(layers[0].map(function(d) { return d.x; }));
@@ -172,6 +177,10 @@ function addSvg2(category) {
 		  })
 		  .on("mouseleave",function(d,i){
 			d3.select(".layer2-"+d["category_n"]).style("stroke","#000000").style("stroke-width",0); 
+		  })
+		  .on("click",function(d,i){
+			console.log(d["category"])
+			addSvg3([d["category"]]);
 		  });
 	  svg2.append("g")
 		  .attr("class", "axis axis--x")
@@ -192,6 +201,7 @@ var svg3 = d3.select("svg.dataviz3")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 function addSvg3(category) {
+	console.log(category);
     svg3.selectAll("*").remove();
 	  var layers = d3.layout.stack()(category.map(function(c,category_n) {
 		return data.map(function(d) {
@@ -224,11 +234,15 @@ function addSvg3(category) {
 		  .attr("y", function(d) { return y(d.y + d.y0); })
 		  .attr("height", function(d) { return y(d.y0) - y(d.y + d.y0); })
 		  .attr("width", x.rangeBand() - 1)
-		  .on("mouseenter",function(d,i){
+		  /*.on("mouseenter",function(d,i){
 			d3.select(".layer3-"+d["category_n"]).style("stroke","#000000").style("stroke-width",3); 
 		  })
 		  .on("mouseleave",function(d,i){
 			d3.select(".layer3-"+d["category_n"]).style("stroke","#000000").style("stroke-width",0); 
+		  })*/
+		  .on("click",function(d,i){
+			console.log(d["category"])
+			addSvg3(Categories[d["category"]]);
 		  });
 	  svg3.append("g")
 		  .attr("class", "axis axis--x")
