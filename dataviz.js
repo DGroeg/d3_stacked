@@ -211,22 +211,17 @@ function addSvg2(category) {
 			 svg2.select(".tooltip").remove();
 		  })
 		  .on("click",function(d,i){
-<<<<<<< HEAD
-			  if (category[0] !== "Unspecified time use"){
+
+        if (category[0] !== "Unspecified time use"){
 				  d3.select(".caption3").text(d["category"]);
 				  addSvg3([d["category"]]);
 			  }
-		  });
-=======
-        d3.select(".caption3").text(d["category"]);
-			  addSvg3([d["category"]]);
 		  })
       .transition()
       .duration(400)
 		  .attr("height", function(d) { return y(d.y0) - y(d.y + d.y0); })
 		  .attr("y", function(d) { return y(d.y + d.y0); })
       ;
->>>>>>> origin/master
 	  svg2.append("g")
 		  .attr("class", "axis axis--x")
 		  .attr("transform", "translate(0," + height + ")")
@@ -256,7 +251,7 @@ function addSvg3(category) {
     svg3.selectAll("*").remove();
 	  var layers = d3.layout.stack()(category.map(function(c,category_n) {
 		return data.map(function(d) {
-		  return {x: d.country, y: d[c], category_n:category_n};
+		  return {x: d.country, y: d[c], category_n:category_n, category:c};
 		});
 	  }));
 	  x.domain(layers[0].map(function(d) { return d.x; }));
@@ -282,9 +277,8 @@ function addSvg3(category) {
 		  .data(function(d) { return d; })
 		.enter().append("rect")
 		  .attr("x", function(d) { return x(d.x); })
-<<<<<<< HEAD
-		  .attr("y", function(d) { return y(d.y + d.y0); })
-		  .attr("height", function(d) { return y(d.y0) - y(d.y + d.y0); })
+		  .attr("y", function(d) { return y(0); })
+		  .attr("height", 0)
 		  .attr("width", x.rangeBand() - 1)
 		  .on("mouseenter",function(d,i){
 			svg3.append("text")
@@ -295,17 +289,13 @@ function addSvg3(category) {
 		  })
 		  .on("mouseleave",function(d,i){
 			svg3.select(".tooltip").remove();
-		  });
-=======
-		  .attr("y", function(d) { return y(0); })
-		  .attr("height", 0)
-		  .attr("width", x.rangeBand() - 1)
+		  })
       .transition()
       .duration(50)
       .delay(function(d,i) {return i*50})
       .attr("height", function(d) { return y(d.y0) - y(d.y + d.y0); })
-      .attr("y", function(d) { return y(d.y + d.y0); });;
->>>>>>> origin/master
+      .attr("y", function(d) { return y(d.y + d.y0); });
+
 	  svg3.append("g")
 		  .attr("class", "axis axis--x")
 		  .attr("transform", "translate(0," + height + ")")
