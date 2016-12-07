@@ -112,7 +112,7 @@ d3.csv("data.csv", function(error, _data) {
         d3.select(".layer-"+d["category_n"]).style("stroke","#000000").style("stroke-width",0); 
       })
       .on("click",function(d,i){
-        console.log(d["category"])
+        d3.select(".caption2").text(d["category"]);
         addSvg2(Categories[d["category"]]);
       });
   svg.append("g")
@@ -138,7 +138,9 @@ var svg2 = d3.select("svg.dataviz2")
 function addSvg2(category) {
     if (category == null){
       console.log("No data for Unspecified!");
-      //return;
+      svg2.selectAll("*").remove();
+      svg3.selectAll("*").remove();
+      return;
     }
     svg2.selectAll("*").remove();
 	  var layers = d3.layout.stack()(category.map(function(c,category_n) {
@@ -179,8 +181,8 @@ function addSvg2(category) {
 			d3.select(".layer2-"+d["category_n"]).style("stroke","#000000").style("stroke-width",0); 
 		  })
 		  .on("click",function(d,i){
-			console.log(d["category"])
-			addSvg3([d["category"]]);
+        d3.select(".caption3").text(d["category"]);
+			  addSvg3([d["category"]]);
 		  });
 	  svg2.append("g")
 		  .attr("class", "axis axis--x")
@@ -233,17 +235,7 @@ function addSvg3(category) {
 		  .attr("x", function(d) { return x(d.x); })
 		  .attr("y", function(d) { return y(d.y + d.y0); })
 		  .attr("height", function(d) { return y(d.y0) - y(d.y + d.y0); })
-		  .attr("width", x.rangeBand() - 1)
-		  /*.on("mouseenter",function(d,i){
-			d3.select(".layer3-"+d["category_n"]).style("stroke","#000000").style("stroke-width",3); 
-		  })
-		  .on("mouseleave",function(d,i){
-			d3.select(".layer3-"+d["category_n"]).style("stroke","#000000").style("stroke-width",0); 
-		  })*/
-		  .on("click",function(d,i){
-			console.log(d["category"])
-			addSvg3(Categories[d["category"]]);
-		  });
+		  .attr("width", x.rangeBand() - 1);
 	  svg3.append("g")
 		  .attr("class", "axis axis--x")
 		  .attr("transform", "translate(0," + height + ")")
