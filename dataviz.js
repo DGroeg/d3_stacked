@@ -102,9 +102,9 @@ d3.csv("data.csv", function(error, _data) {
       .data(function(d) { return d; })
     .enter().append("rect")
       .attr("x", function(d) { return x(d.x); })
-      .attr("y", function(d) { return y(d.y + d.y0); })
-      .attr("height", function(d) { return y(d.y0) - y(d.y + d.y0); })
+      .attr("y", function(d) { return y(0); })
       .attr("width", x.rangeBand() - 1)
+      .attr("height", 0)
       .on("mouseenter",function(d,i){
         d3.select(".layer-"+d["category_n"]).style("stroke","#000000").style("stroke-width",3); 
       })
@@ -114,7 +114,11 @@ d3.csv("data.csv", function(error, _data) {
       .on("click",function(d,i){
         d3.select(".caption2").text(d["category"]);
         addSvg2(Categories[d["category"]]);
-      });
+      })
+      .transition()
+      .duration(400)
+      .attr("height", function(d) { return y(d.y0) - y(d.y + d.y0); })
+      .attr("y", function(d) { return y(d.y + d.y0); });
   svg.append("g")
       .attr("class", "axis axis--x")
       .attr("transform", "translate(0," + height + ")")
@@ -171,8 +175,8 @@ function addSvg2(category) {
 		  .data(function(d) { return d; })
 		.enter().append("rect")
 		  .attr("x", function(d) { return x(d.x); })
-		  .attr("y", function(d) { return y(d.y + d.y0); })
-		  .attr("height", function(d) { return y(d.y0) - y(d.y + d.y0); })
+		  .attr("y", function(d) { return y(0); })
+		  .attr("height", 0)
 		  .attr("width", x.rangeBand() - 1)
 		  .on("mouseenter",function(d,i){
 			d3.select(".layer2-"+d["category_n"]).style("stroke","#000000").style("stroke-width",3); 
@@ -183,7 +187,12 @@ function addSvg2(category) {
 		  .on("click",function(d,i){
         d3.select(".caption3").text(d["category"]);
 			  addSvg3([d["category"]]);
-		  });
+		  })
+      .transition()
+      .duration(400)
+		  .attr("height", function(d) { return y(d.y0) - y(d.y + d.y0); })
+		  .attr("y", function(d) { return y(d.y + d.y0); })
+      ;
 	  svg2.append("g")
 		  .attr("class", "axis axis--x")
 		  .attr("transform", "translate(0," + height + ")")
@@ -233,9 +242,14 @@ function addSvg3(category) {
 		  .data(function(d) { return d; })
 		.enter().append("rect")
 		  .attr("x", function(d) { return x(d.x); })
-		  .attr("y", function(d) { return y(d.y + d.y0); })
-		  .attr("height", function(d) { return y(d.y0) - y(d.y + d.y0); })
-		  .attr("width", x.rangeBand() - 1);
+		  .attr("y", function(d) { return y(0); })
+		  .attr("height", 0)
+		  .attr("width", x.rangeBand() - 1)
+      .transition()
+      .duration(50)
+      .delay(function(d,i) {return i*50})
+      .attr("height", function(d) { return y(d.y0) - y(d.y + d.y0); })
+      .attr("y", function(d) { return y(d.y + d.y0); });;
 	  svg3.append("g")
 		  .attr("class", "axis axis--x")
 		  .attr("transform", "translate(0," + height + ")")
