@@ -102,9 +102,9 @@ d3.csv("data.csv", function(error, _data) {
       .data(function(d) { return d; })
     .enter().append("rect")
       .attr("x", function(d) { return x(d.x); })
-      .attr("y", function(d) { return y(d.y + d.y0); })
-      .attr("height", function(d) { return y(d.y0) - y(d.y + d.y0); })
+      .attr("y", function(d) { return y(0); })
       .attr("width", x.rangeBand() - 1)
+      .attr("height", 0)
       .on("mouseenter",function(d,i){
         d3.select(".layer-"+d["category_n"]).style("stroke","#FFFFFF").style("stroke-width",3); 
 		var xPos = parseFloat(d3.select(this).attr("x"));
@@ -123,7 +123,11 @@ d3.csv("data.csv", function(error, _data) {
       .on("click",function(d,i){
         d3.select(".caption2").text(d["category"]);
         addSvg2(Categories[d["category"]]);
-      });
+      })
+      .transition()
+      .duration(400)
+      .attr("height", function(d) { return y(d.y0) - y(d.y + d.y0); })
+      .attr("y", function(d) { return y(d.y + d.y0); });
   svg.append("g")
       .attr("class", "axis axis--x")
       .attr("transform", "translate(0," + height + ")")
@@ -184,8 +188,8 @@ function addSvg2(category) {
 		  .data(function(d) { return d; })
 		.enter().append("rect")
 		  .attr("x", function(d) { return x(d.x); })
-		  .attr("y", function(d) { return y(d.y + d.y0); })
-		  .attr("height", function(d) { return y(d.y0) - y(d.y + d.y0); })
+		  .attr("y", function(d) { return y(0); })
+		  .attr("height", 0)
 		  .attr("width", x.rangeBand() - 1)
 		  .on("mouseenter",function(d,i){
 			  if (category[0] !== "Unspecified time use"){
@@ -207,11 +211,22 @@ function addSvg2(category) {
 			 svg2.select(".tooltip").remove();
 		  })
 		  .on("click",function(d,i){
+<<<<<<< HEAD
 			  if (category[0] !== "Unspecified time use"){
 				  d3.select(".caption3").text(d["category"]);
 				  addSvg3([d["category"]]);
 			  }
 		  });
+=======
+        d3.select(".caption3").text(d["category"]);
+			  addSvg3([d["category"]]);
+		  })
+      .transition()
+      .duration(400)
+		  .attr("height", function(d) { return y(d.y0) - y(d.y + d.y0); })
+		  .attr("y", function(d) { return y(d.y + d.y0); })
+      ;
+>>>>>>> origin/master
 	  svg2.append("g")
 		  .attr("class", "axis axis--x")
 		  .attr("transform", "translate(0," + height + ")")
@@ -267,6 +282,7 @@ function addSvg3(category) {
 		  .data(function(d) { return d; })
 		.enter().append("rect")
 		  .attr("x", function(d) { return x(d.x); })
+<<<<<<< HEAD
 		  .attr("y", function(d) { return y(d.y + d.y0); })
 		  .attr("height", function(d) { return y(d.y0) - y(d.y + d.y0); })
 		  .attr("width", x.rangeBand() - 1)
@@ -280,6 +296,16 @@ function addSvg3(category) {
 		  .on("mouseleave",function(d,i){
 			svg3.select(".tooltip").remove();
 		  });
+=======
+		  .attr("y", function(d) { return y(0); })
+		  .attr("height", 0)
+		  .attr("width", x.rangeBand() - 1)
+      .transition()
+      .duration(50)
+      .delay(function(d,i) {return i*50})
+      .attr("height", function(d) { return y(d.y0) - y(d.y + d.y0); })
+      .attr("y", function(d) { return y(d.y + d.y0); });;
+>>>>>>> origin/master
 	  svg3.append("g")
 		  .attr("class", "axis axis--x")
 		  .attr("transform", "translate(0," + height + ")")
