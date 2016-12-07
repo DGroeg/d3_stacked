@@ -3,7 +3,7 @@ var data;
 var Genders = ["Males", "Females"];
 
 var Countries = [ "Belgium", "Bulgaria", "Germany", "Estonia", "Spain", "France", "Italy", "Latvia", "Lithuania", "Poland",
-"Slovenia", "Finland", "United Kingdom", "Norway" ];
+"Slovenia", "Finland", "UK", "Norway" ];
 //"Total", 
 var Fields = [ 
 "Personal care",
@@ -32,7 +32,7 @@ var Travel = ["Travel to/from work", "Travel related to study", "Travel related 
 "Travel related to other household purposes", "Travel related to leisure, social and associative life", "Unspecified travel"];
 var AllCat = Fields.concat(PersonalCare).concat(Employment).concat(Study).concat(Household).concat(Leisure).concat(Travel);
 
-var o_width=950*1.3, o_height=400*1.3;
+var o_width=950*1, o_height=400*1;
 
 var margin = {top: 20, right: 50, bottom: 30, left: 20},
     width = o_width - margin.left - margin.right,
@@ -77,7 +77,7 @@ d3.csv("data.csv", function(error, data) {
       return accu;
     }
   },[]);
-  console.log(data);
+  //console.log(data);
 
   var layers = d3.layout.stack()(Fields.map(function(c,category_n) {
     return data.map(function(d) {
@@ -93,7 +93,7 @@ d3.csv("data.csv", function(error, data) {
       .style("fill", function(d, i) { return z(i); });
 
   layer.selectAll("rect")
-      .data(function(d) { console.log(d);return d; })
+      .data(function(d) { return d; })
     .enter().append("rect")
       .attr("x", function(d) { return x(d.x); })
       .attr("y", function(d) { return y(d.y + d.y0); })
@@ -115,5 +115,160 @@ d3.csv("data.csv", function(error, data) {
       .attr("transform", "translate(" + width + ",0)")
       .call(yAxis);
 });
+
+var svg2 = d3.select("svg.dataviz2")
+    .attr("width", o_width)
+    .attr("height", o_height)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+function addSvg2(category) {
+	d3.csv("data.csv", function(error, data) {
+	  if (error) throw error;
+	  data = data.reduce(function(accu,datum) {
+		var found = accu.find(function(d){ return d.country == datum.COUNTRY});
+		if (found == null) {
+		  var d = {"country":datum.COUNTRY};
+		  category.forEach(function(key){
+			d[key] = parseInt(datum[key],10)/2 || 0;
+		  });
+		  return accu.concat([d]);
+		} else {
+		  category.forEach(function(key){
+			found[key] += parseInt(datum[key],10)/2 || 0;
+		  })
+		  return accu;
+		}
+	  },[]);
+	  //console.log(data);
+
+	  var layers = d3.layout.stack()(category.map(function(c,category_n) {
+		return data.map(function(d) {
+			console.log(category_n);
+		  return {x: d.country, y: d[c], category_n:category_n};
+		});
+	  }));
+	  x.domain(layers[0].map(function(d) { return d.x; }));
+	  var max = 0;
+	  data.map(function(d) {
+		  var sum = 0;
+		  category.forEach(function(key) {
+			sum = sum + d[key];
+		  });
+		  if (sum > max){
+			  max = sum;
+		  };
+		});
+	  //console.log(max);
+	  y.domain([0,max]);
+	  var layer = svg2.selectAll(".layer")
+		  .data(layers)
+		.enter().append("g")
+		  .attr("class", function(d,i) {return "layer2-"+i;})
+		  .style("fill", function(d, i) { return z(i); });
+
+	  layer.selectAll("rect")
+		  .data(function(d) { return d; })
+		.enter().append("rect")
+		  .attr("x", function(d) { return x(d.x); })
+		  .attr("y", function(d) { return y(d.y + d.y0); })
+		  .attr("height", function(d) { return y(d.y0) - y(d.y + d.y0); })
+		  .attr("width", x.rangeBand() - 1)
+		  .on("mouseenter",function(d,i){
+			d3.select(".layer2-"+d["category_n"]).style("stroke","#000000").style("stroke-width",3); 
+		  })
+		  .on("mouseleave",function(d,i){
+			d3.select(".layer2-"+d["category_n"]).style("stroke","#000000").style("stroke-width",0); 
+		  });
+	  svg2.append("g")
+		  .attr("class", "axis axis--x")
+		  .attr("transform", "translate(0," + height + ")")
+		  .call(xAxis);
+
+	  svg2.append("g")
+		  .attr("class", "axis axis--y")
+		  .attr("transform", "translate(" + width + ",0)")
+		  .call(yAxis);
+	});
+};
+
+addSvg2(PersonalCare);
+
+var svg3 = d3.select("svg.dataviz3")
+    .attr("width", o_width)
+    .attr("height", o_height)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+	
+function addSvg3(category) {
+	d3.csv("data.csv", function(error, data) {
+	  if (error) throw error;
+	  data = data.reduce(function(accu,datum) {
+		var found = accu.find(function(d){ return d.country == datum.COUNTRY});
+		if (found == null) {
+		  var d = {"country":datum.COUNTRY};
+		  category.forEach(function(key){
+			d[key] = parseInt(datum[key],10)/2 || 0;
+		  });
+		  return accu.concat([d]);
+		} else {
+		  category.forEach(function(key){
+			found[key] += parseInt(datum[key],10)/2 || 0;
+		  })
+		  return accu;
+		}
+	  },[]);
+	  //console.log(data);
+
+	  var layers = d3.layout.stack()(category.map(function(c,category_n) {
+		return data.map(function(d) {
+		  return {x: d.country, y: d[c], category_n:category_n};
+		});
+	  }));
+	  x.domain(layers[0].map(function(d) { return d.x; }));
+	  var max = 0;
+	  data.map(function(d) {
+		  var sum = 0;
+		  category.forEach(function(key) {
+			sum = sum + d[key];
+		  });
+		  if (sum > max){
+			  max = sum;
+		  };
+		});
+	  //console.log(max);
+	  y.domain([0,max]);
+	  var layer = svg3.selectAll(".layer")
+		  .data(layers)
+		.enter().append("g")
+		  .attr("class", function(d,i) {return "layer3-"+i;})
+		  .style("fill", function(d, i) { return z(i); });
+
+	  layer.selectAll("rect")
+		  .data(function(d) { return d; })
+		.enter().append("rect")
+		  .attr("x", function(d) { return x(d.x); })
+		  .attr("y", function(d) { return y(d.y + d.y0); })
+		  .attr("height", function(d) { return y(d.y0) - y(d.y + d.y0); })
+		  .attr("width", x.rangeBand() - 1)
+		  .on("mouseenter",function(d,i){
+			d3.select(".layer3-"+d["category_n"]).style("stroke","#000000").style("stroke-width",3); 
+		  })
+		  .on("mouseleave",function(d,i){
+			d3.select(".layer3-"+d["category_n"]).style("stroke","#000000").style("stroke-width",0); 
+		  });
+	  svg3.append("g")
+		  .attr("class", "axis axis--x")
+		  .attr("transform", "translate(0," + height + ")")
+		  .call(xAxis);
+
+	  svg3.append("g")
+		  .attr("class", "axis axis--y")
+		  .attr("transform", "translate(" + width + ",0)")
+		  .call(yAxis);
+	});
+};
+
+addSvg3(["Sleep"]);
 
 
