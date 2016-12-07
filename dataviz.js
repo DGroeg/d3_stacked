@@ -28,6 +28,7 @@ var Leisure = [ "Organisational work", "Informal help to other households", "Par
 "Computer games", "Computing", "Hobbies and games except computing and computer games", 
 "Reading books", "Reading, except books", "TV and video", "Radio and music", 
 "Unspecified leisure"];
+var Categories = {"Leisure, social and associative life":Leisure,"Personal care":PersonalCare,"Employment, related activities and travel as part of/during main and second job":Employment,"Study":Study,"Household and family care":Household,"Travel except travel related to jobs":Travel,"Unspecified time use":null};
 var Travel = ["Travel to/from work", "Travel related to study", "Travel related to shopping and services", "Transporting a child", 
 "Travel related to other household purposes", "Travel related to leisure, social and associative life", "Unspecified travel"];
 var AllCat = Fields.concat(PersonalCare).concat(Employment).concat(Study).concat(Household).concat(Leisure).concat(Travel);
@@ -81,7 +82,7 @@ d3.csv("data.csv", function(error, _data) {
 
   var layers = d3.layout.stack()(Fields.map(function(c,category_n) {
     return data.map(function(d) {
-      return {x: d.country, y: d[c], category_n:category_n};
+      return {x: d.country, y: d[c], category_n:category_n, category:c};
     });
   }));
   x.domain(layers[0].map(function(d) { return d.x; }));
@@ -104,6 +105,10 @@ d3.csv("data.csv", function(error, _data) {
       })
       .on("mouseleave",function(d,i){
         d3.select(".layer-"+d["category_n"]).style("stroke","#000000").style("stroke-width",0); 
+      })
+      .on("click",function(d,i){
+        console.log(d["category"])
+        addSvg2(Categories[d["category"]]);
       });
   svg.append("g")
       .attr("class", "axis axis--x")
@@ -126,9 +131,13 @@ var svg2 = d3.select("svg.dataviz2")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 function addSvg2(category) {
+    if (category == null){
+      console.log("No data fo Unspecified!");
+      //return;
+    }
+    svg2.selectAll("*").remove();
 	  var layers = d3.layout.stack()(category.map(function(c,category_n) {
 		return data.map(function(d) {
-			console.log(category_n);
 		  return {x: d.country, y: d[c], category_n:category_n};
 		});
 	  }));
@@ -183,6 +192,7 @@ var svg3 = d3.select("svg.dataviz3")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 function addSvg3(category) {
+    svg3.selectAll("*").remove();
 	  var layers = d3.layout.stack()(category.map(function(c,category_n) {
 		return data.map(function(d) {
 		  return {x: d.country, y: d[c], category_n:category_n};
