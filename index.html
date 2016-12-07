@@ -13,15 +13,24 @@
 .axis--x path {
   display: none;
 }
-#dv1_div{
+#body{
+	position: absolute;
+    left: 50%;
+    -webkit-transform: translate(-50%, 0);
+    transform: translate(-50%, 0);
 }
-#dv2_div{
-}
-#dv3_div{
+.tooltip{
+	text-anchor: left;
+	font-family: sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+	fill:black;	
 }
 </style>
 
-<body>
+
+<body id="body">
+	<font size="20">Time use across Europe</font>
 	<div id="dv1_div">
 		<h2 class="caption1"></h2>
 		<svg class="dataviz1" id="dv1"></svg>

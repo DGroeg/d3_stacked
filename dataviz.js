@@ -106,10 +106,19 @@ d3.csv("data.csv", function(error, _data) {
       .attr("height", function(d) { return y(d.y0) - y(d.y + d.y0); })
       .attr("width", x.rangeBand() - 1)
       .on("mouseenter",function(d,i){
-        d3.select(".layer-"+d["category_n"]).style("stroke","#000000").style("stroke-width",3); 
+        d3.select(".layer-"+d["category_n"]).style("stroke","#FFFFFF").style("stroke-width",3); 
+		var xPos = parseFloat(d3.select(this).attr("x"));
+		var yPos = parseFloat(d3.select(this).attr("y"));
+		var height = parseFloat(d3.select(this).attr("height"))
+		svg.append("text")
+			.attr("x",10)
+			.attr("y",315)
+			.attr("class","tooltip")
+			.text(d.y+" minutes per day of "+d.category+" in "+d.x);
       })
       .on("mouseleave",function(d,i){
-        d3.select(".layer-"+d["category_n"]).style("stroke","#000000").style("stroke-width",0); 
+        d3.select(".layer-"+d["category_n"]).style("stroke","#FFFFFF").style("stroke-width",0);
+		svg.select(".tooltip").remove();
       })
       .on("click",function(d,i){
         d3.select(".caption2").text(d["category"]);
@@ -123,10 +132,13 @@ d3.csv("data.csv", function(error, _data) {
   svg.append("g")
       .attr("class", "axis axis--y")
       .attr("transform", "translate(" + width + ",0)")
-      .call(yAxis);
-
-  //addSvg2(PersonalCare);
-  //addSvg3(["Sleep"]);
+      .call(yAxis)
+	  .append("text")
+	  .attr("transform", "rotate(-90)")
+	  .attr("y", 40)
+	  .attr("dy", ".71em")
+	  .style("text-anchor", "end")
+	  .text("Time used for the activity each day in minutes");
 });
 
 var svg2 = d3.select("svg.dataviz2")
@@ -138,11 +150,12 @@ var svg2 = d3.select("svg.dataviz2")
 function addSvg2(category) {
     if (category == null){
       console.log("No data for Unspecified!");
-      svg2.selectAll("*").remove();
-      svg3.selectAll("*").remove();
-      return;
+	  category = ["Unspecified time use"];
     }
+	d3.select(".caption2").text();
     svg2.selectAll("*").remove();
+	d3.select(".caption3").text("");
+    svg3.selectAll("*").remove();
 	  var layers = d3.layout.stack()(category.map(function(c,category_n) {
 		return data.map(function(d) {
 		  return {x: d.country, y: d[c], category_n:category_n, category:c};
@@ -175,14 +188,29 @@ function addSvg2(category) {
 		  .attr("height", function(d) { return y(d.y0) - y(d.y + d.y0); })
 		  .attr("width", x.rangeBand() - 1)
 		  .on("mouseenter",function(d,i){
-			d3.select(".layer2-"+d["category_n"]).style("stroke","#000000").style("stroke-width",3); 
+			  if (category[0] !== "Unspecified time use"){
+				  d3.select(".layer2-"+d["category_n"]).style("stroke","#FFFFFF").style("stroke-width",3); 
+			  }
+			  var xPos = parseFloat(d3.select(this).attr("x"));
+			var yPos = parseFloat(d3.select(this).attr("y"));
+			var height = parseFloat(d3.select(this).attr("height"))
+			svg2.append("text")
+				.attr("x",10)
+				.attr("y",315)
+				.attr("class","tooltip")
+				.text(d.y+" minutes per day of "+d.category+" in "+d.x);
 		  })
 		  .on("mouseleave",function(d,i){
-			d3.select(".layer2-"+d["category_n"]).style("stroke","#000000").style("stroke-width",0); 
+			 if (category[0] !== "Unspecified time use"){
+				d3.select(".layer2-"+d["category_n"]).style("stroke","#FFFFFF").style("stroke-width",0);
+			 }
+			 svg2.select(".tooltip").remove();
 		  })
 		  .on("click",function(d,i){
-        d3.select(".caption3").text(d["category"]);
-			  addSvg3([d["category"]]);
+			  if (category[0] !== "Unspecified time use"){
+				  d3.select(".caption3").text(d["category"]);
+				  addSvg3([d["category"]]);
+			  }
 		  });
 	  svg2.append("g")
 		  .attr("class", "axis axis--x")
@@ -192,7 +220,13 @@ function addSvg2(category) {
 	  svg2.append("g")
 		  .attr("class", "axis axis--y")
 		  .attr("transform", "translate(" + width + ",0)")
-		  .call(yAxis);
+		  .call(yAxis)
+		  .append("text")
+		  .attr("transform", "rotate(-90)")
+		  .attr("y", 40)
+		  .attr("dy", ".71em")
+		  .style("text-anchor", "end")
+		  .text("Time used for the activity each day in minutes");
 };
 
 
@@ -235,16 +269,32 @@ function addSvg3(category) {
 		  .attr("x", function(d) { return x(d.x); })
 		  .attr("y", function(d) { return y(d.y + d.y0); })
 		  .attr("height", function(d) { return y(d.y0) - y(d.y + d.y0); })
-		  .attr("width", x.rangeBand() - 1);
+		  .attr("width", x.rangeBand() - 1)
+		  .on("mouseenter",function(d,i){
+			svg3.append("text")
+				.attr("x",10)
+				.attr("y",315)
+				.attr("class","tooltip")
+				.text(d.y+" minutes per day of "+d.category+" in "+d.x);
+		  })
+		  .on("mouseleave",function(d,i){
+			svg3.select(".tooltip").remove();
+		  });
 	  svg3.append("g")
 		  .attr("class", "axis axis--x")
 		  .attr("transform", "translate(0," + height + ")")
 		  .call(xAxis);
-
+		  
 	  svg3.append("g")
 		  .attr("class", "axis axis--y")
 		  .attr("transform", "translate(" + width + ",0)")
-		  .call(yAxis);
+		  .call(yAxis)
+		  .append("text")
+		  .attr("transform", "rotate(-90)")
+		  .attr("y", 40)
+		  .attr("dy", ".71em")
+		  .style("text-anchor", "end")
+		  .text("Time used for the activity each day in minutes");
 };
 
 
