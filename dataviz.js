@@ -114,7 +114,7 @@ d3.csv("data.csv", function(error, _data) {
 			.attr("x",10)
 			.attr("y",315)
 			.attr("class","tooltip")
-			.text(d.y+" minutes per day of "+d.category+" in "+d.x);
+			.text(format_text_per_day(d.y,d.category,d.x));
       })
       .on("mouseleave",function(d,i){
         d3.select(".layer-"+d["category_n"]).style("stroke","#FFFFFF").style("stroke-width",0);
@@ -202,7 +202,7 @@ function addSvg2(category) {
 				.attr("x",10)
 				.attr("y",315)
 				.attr("class","tooltip")
-				.text(d.y+" minutes per day of "+d.category+" in "+d.x);
+				.text(format_text_per_day(d.y,d.category,d.x));
 		  })
 		  .on("mouseleave",function(d,i){
 			 if (category[0] !== "Unspecified time use"){
@@ -285,7 +285,7 @@ function addSvg3(category) {
 				.attr("x",10)
 				.attr("y",315)
 				.attr("class","tooltip")
-				.text(d.y+" minutes per day of "+d.category+" in "+d.x);
+				.text(format_text_per_day(d.y,d.category,d.x));
 		  })
 		  .on("mouseleave",function(d,i){
 			svg3.select(".tooltip").remove();
@@ -313,5 +313,13 @@ function addSvg3(category) {
 		  .text("Time used for the activity each day in minutes");
 };
 
-
+function format_text_per_day(minutes,category,country){
+  if (minutes > 120) {
+    var hours = Math.floor(minutes/60);
+    var minutes = minutes - hours * 60;
+    return hours +"h"+Math.floor(minutes)+" per day of "+category.toLowerCase()+" in "+country
+  } else {
+    return Math.floor(minutes)+" minutes per day of "+category.toLowerCase()+" in "+country
+  }
+}
 
