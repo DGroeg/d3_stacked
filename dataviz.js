@@ -79,9 +79,9 @@ d3.csv("data.csv", function(error, data) {
   },[]);
   console.log(data);
 
-  var layers = d3.layout.stack()(Fields.map(function(c) {
+  var layers = d3.layout.stack()(Fields.map(function(c,category_n) {
     return data.map(function(d) {
-      return {x: d.country, y: d[c]};
+      return {x: d.country, y: d[c], category_n:category_n};
     });
   }));
   x.domain(layers[0].map(function(d) { return d.x; }));
@@ -89,10 +89,8 @@ d3.csv("data.csv", function(error, data) {
   var layer = svg.selectAll(".layer")
       .data(layers)
     .enter().append("g")
-      .attr("class", "layer")
+      .attr("class", function(d,i) {return "layer-"+i;})
       .style("fill", function(d, i) { return z(i); });
-
-  
 
   layer.selectAll("rect")
       .data(function(d) { console.log(d);return d; })
@@ -100,8 +98,13 @@ d3.csv("data.csv", function(error, data) {
       .attr("x", function(d) { return x(d.x); })
       .attr("y", function(d) { return y(d.y + d.y0); })
       .attr("height", function(d) { return y(d.y0) - y(d.y + d.y0); })
-      .attr("width", x.rangeBand() - 1);
-
+      .attr("width", x.rangeBand() - 1)
+      .on("mouseenter",function(d,i){
+        d3.select(".layer-"+d["category_n"]).style("stroke","#000000").style("stroke-width",3); 
+      })
+      .on("mouseleave",function(d,i){
+        d3.select(".layer-"+d["category_n"]).style("stroke","#000000").style("stroke-width",0); 
+      });
   svg.append("g")
       .attr("class", "axis axis--x")
       .attr("transform", "translate(0," + height + ")")
